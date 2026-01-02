@@ -4,12 +4,12 @@ import Order from "@/lib/models/Order";
 
 export async function DELETE(
   req: Request,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     await connectDB();
 
-    const { id } = await context.params; // 👈 FIX: await params
+    const { id } = params;
 
     const deletedOrder = await Order.findByIdAndDelete(id);
 
