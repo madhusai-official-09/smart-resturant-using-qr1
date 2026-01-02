@@ -31,20 +31,33 @@ export default function MenuContent() {
     }
   }, [tableFromQR]);
 
+  // ✅ ADD TO CART (FIXED)
   const handleOrder = async (item: any) => {
     try {
       setLoadingItem(item.name);
+
+      const table = localStorage.getItem("selectedTable");
+      if (!table) {
+        alert("No table found! Scan QR again");
+        return;
+      }
 
       const res = await fetch("/api/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          table,
           items: [{ name: item.name, price: item.price, quantity: 1 }],
         }),
       });
 
       const data = await res.json();
-      data.success ? alert(`${item.name} added 😊`) : alert("Something went wrong!");
+
+      if (data.success) {
+        alert(`${item.name} added 😊`);
+      } else {
+        alert(data.message || "Something went wrong!");
+      }
     } catch {
       alert("Server error 😢");
     } finally {
@@ -52,9 +65,10 @@ export default function MenuContent() {
     }
   };
 
+  // ✅ PLACE ORDER (FIXED)
   const placeOrder = async () => {
     const table = localStorage.getItem("selectedTable");
-    if (!table) return alert("No table found! Scan QR again");
+    if (!table) return alert("No table found!");
 
     try {
       setPlacing(true);
@@ -62,12 +76,18 @@ export default function MenuContent() {
       const cartRes = await fetch("/api/cart");
       const cartData = await cartRes.json();
 
-      if (!cartData.cart?.items?.length) return alert("Cart is empty!");
+      if (!cartData.cart?.items?.length) {
+        alert("Cart is empty!");
+        return;
+      }
 
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ table, items: cartData.cart.items }),
+        body: JSON.stringify({
+          table,
+          items: cartData.cart.items,
+        }),
       });
 
       const data = await res.json();
@@ -78,10 +98,11 @@ export default function MenuContent() {
         await fetch("/api/cart", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ clear: true }),
         });
 
         window.location.href = "/orders";
+      } else {
+        alert(data.message || "Order failed");
       }
     } catch {
       alert("Server error ❌");
@@ -95,14 +116,14 @@ export default function MenuContent() {
   );
 
   return (
-    <div className="relative min-h-screen px-8 md:px-20 pb-40 text-white bg-[#05051b]">
+    <div className="min-h-screen px-8 md:px-20 pb-40 text-white bg-[#05051b]">
       <div className="pt-28">
         <h1 className="text-4xl font-bold">
           Explore Our <span className="text-orange-400">Delicious Menu</span>
         </h1>
 
         {tableFromQR && (
-          <p className="mt-2 text-green-400 text-lg">
+          <p className="mt-2 text-green-400">
             📌 Ordering for <b>Table {tableFromQR}</b>
           </p>
         )}
