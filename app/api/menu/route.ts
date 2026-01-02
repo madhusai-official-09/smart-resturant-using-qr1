@@ -1,16 +1,5 @@
 import { NextResponse } from "next/server";
-import mongoose from "mongoose";
-
-const MONGO_URI = process.env.MONGO_URI as string;
-
-if (!MONGO_URI) {
-  throw new Error("❌ MONGO_URI NOT FOUND — check .env.local");
-}
-
-const connectDB = async () => {
-  if (mongoose.connection.readyState >= 1) return;
-  await mongoose.connect(MONGO_URI);
-};
+import { connectDB } from "@/lib/db";
 
 export async function GET() {
   try {
@@ -19,7 +8,6 @@ export async function GET() {
     return NextResponse.json(
       {
         success: true,
-        message: "Menu API working 😎",
         items: [
           { id: 1, name: "Pizza", price: 199 },
           { id: 2, name: "Burger", price: 129 },
@@ -28,9 +16,12 @@ export async function GET() {
       { status: 200 }
     );
   } catch (error: any) {
-    console.error("API ERROR:", error.message);
+    console.error("MENU API ERROR:", error.message);
     return NextResponse.json(
-      { success: false, error: error.message },
+      {
+        success: false,
+        message: error.message,
+      },
       { status: 500 }
     );
   }
