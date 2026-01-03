@@ -57,16 +57,16 @@ const ContactPage = () => {
             <h2 className="text-lg font-semibold text-white">Contact Info</h2>
           </div>
 
-          <ContactItem icon={<BiPhone />} title="Phone" value="+91 123456789" />
+          <ContactItem icon={<BiPhone />} title="Phone" value="+91 8247842565" />
           <ContactItem
             icon={<BiEnvelope />}
             title="Email"
-            value="abcd@gmail.com"
+            value="madhusaipitani95@gmail.com"
           />
           <ContactItem
             icon={<BiLogoLinkedin />}
             title="LinkedIn"
-            value="linkedin.com/in/"
+            value="linkedin.com/in/pitanimadhusayi"
           />
           <ContactItem
             icon={<BiMap />}
