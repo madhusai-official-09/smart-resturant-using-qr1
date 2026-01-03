@@ -6,10 +6,14 @@ import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 
 const allMenuItems = [
-  { category: "veg", name: "Veg Thali", price: 199, img: "/images/veg/aromatic-spices-grains-culinary-delight.jpg" },
-  { category: "veg", name: "Falafel Bowl", price: 249, img: "/images/veg/delicious-falafel-bowl-vibrant-healthy-mediterranean-meal.jpg" },
-  { category: "veg", name: "Veg Fried Rice", price: 179, img: "/images/veg/vegetable-fried-rice.jpg" },
+  { category: "veg", name: "Aromatic-Spices-grains", price: 199, img: "/images/veg/aromatic-spices-grains-culinary-delight.png" },
+  { category: "veg", name: "Falafel Bowl", price: 249, img: "/images/veg/delicious-falafel-bowl-vibrant-healthy-mediterranean-meal.png" },
+  { category: "veg", name: "Veg Fried Rice", price: 179, img: "/images/veg/vegetable-fried-rice.png" },
   { category: "veg", name: "Fresh Veg Salad", price: 149, img: "/images/veg/vegetable-salad.jpg" },
+  { category: "veg", name: "Chole Bhature", price: 229, img: "/images/veg/chole-bhature.png" },
+  { category: "veg", name: "Spicy Chana Masala", price: 199, img: "/images/veg/spicy-chana-masala.png" },
+  { category: "veg", name: "Mushroom Soup", price: 159, img: "/images/veg/bowl-cream-mushroom-soup-with-bread.png" },
+  { category: "veg", name: "Veg Salad Bowl", price: 129, img: "/images/veg/vegetable-salad-bowl-healthy.png" },
 
   { category: "nonveg", name: "Chole Bhature", price: 229, img: "/images/veg/chole-bhature.jpg" },
   { category: "nonveg", name: "Spicy Chana Masala", price: 199, img: "/images/veg/spicy-chana-masala.jpg" },
