@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, models } from "mongoose";
 
-const MenuSchema = new mongoose.Schema(
+const MenuSchema = new Schema(
   {
     name: String,
     price: Number,
@@ -10,4 +10,5 @@ const MenuSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.Menu || mongoose.model("Menu", MenuSchema);
+const Menu = models.Menu || mongoose.model("Menu", MenuSchema);
+export default Menu;
