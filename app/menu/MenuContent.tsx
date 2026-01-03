@@ -15,11 +15,27 @@ const allMenuItems = [
   { category: "veg", name: "Mushroom Soup", price: 159, img: "/images/veg/bowl-cream-mushroom-soup-with-bread.png" },
   { category: "veg", name: "Veg Salad Bowl", price: 129, img: "/images/veg/vegetable-salad-bowl-healthy.png" },
 
-  { category: "nonveg", name: "Chole Bhature", price: 229, img: "/images/veg/chole-bhature.jpg" },
-  { category: "nonveg", name: "Spicy Chana Masala", price: 199, img: "/images/veg/spicy-chana-masala.jpg" },
+  { category: "nonveg", name: "Breaded Chicken Cutlets", price: 249, img: "/images/nonveg/breaded-chicken.jpg" },
+  { category: "nonveg", name: "Korean Fried Chicken", price: 299, img: "/images/nonveg/delicious-korean-fried-chicken.jpg" },
+  { category: "nonveg", name: "Spicy Mutton Curry", price: 329, img: "/images/nonveg/delicious-spicy-lamb-curry-metal-bowl.jpg" },
+  { category: "nonveg", name: "Fried Chicken Platter", price: 279, img: "/images/nonveg/fried-chicken-tobacco-lettuce-tomatoes.jpg" },
+  { category: "nonveg", name: "Crispy Fried Fish", price: 289, img: "/images/nonveg/fried-fish-white-plate.jpg" },
+  { category: "nonveg", name: "Grilled Pork Steak", price: 349, img: "/images/nonveg/juicy-grilled-pork-fillet-steak-with-green-beans.jpg" },
+  { category: "nonveg", name: "Chicken Biryani", price: 299, img: "/images/nonveg/non-veg-biriyani.png" },
+  { category: "nonveg", name: "Whole Roasted Chicken", price: 399, img: "/images/nonveg/roasted-chicken.jpg" },
+  { category: "nonveg", name: "Roasted Chicken Thighs", price: 319, img: "/images/nonveg/roasted-chicken-thighs-with-roasted-cherry-tomatoes.jpg" },
 
-  { category: "starter", name: "Mushroom Soup", price: 159, img: "/images/veg/png-bowl-cream-mushroom-soup-with-bread.jpg" },
-  { category: "starter", name: "Veg Salad Bowl", price: 129, img: "/images/veg/vegetable-salad-bowl-healthy.jpg" },
+
+  { category: "starter", name: "Veg Sandwich Platter", price: 149, img: "/images/veg/close-up-sandwich-isolated.png" },
+  { category: "starter", name: "Crispy Veg Rolls", price: 179, img: "/images/veg/food-gastronomy-comida-gourmet-foodie.jpg" },
+  { category: "starter", name: "Stuffed Eggplant Rolls", price: 189, img: "/images/veg/front-view-stuffed-eggplant-rolls-white-oval-plate-different-spices-small-bowls-leaves-grey.jpg" },
+  { category: "starter", name: "Eggplant Rolls with Potatoes", price: 199, img: "/images/veg/front-view-delicious-eggplant-rolls-cooked-dish-with-baked-potatoes-seasonings-dark-space.jpg" },
+  { category: "starter", name: "Baked Potato Pie", price: 169, img: "/images/veg/front-view-sliced-potato-pie-with-seasonings-dark-grey-background-pie-cake-bake-dough-ripe.jpg" },
+  { category: "starter", name: "Avocado Veg Salad", price: 159, img: "/images/veg/high-angle-view-vegan-salad-with-avocado.jpg" },
+  { category: "starter", name: "Healthy Veg Meal Box", price: 179, img: "/images/veg/restaurant-healthy-food-delivery-take-away-boxes.jpg" },
+  { category: "starter", name: "Boiled Egg & Veg Plate", price: 149, img: "/images/veg/top-view-plate-with-boiled-eggs-vegetables.jpg" },
+  { category: "starter", name: "Roasted Vegetables Platter", price: 169, img: "/images/veg/top-view-roasted-vegetables-roasted-vegetables-plate.jpg" },
+
 ];
 
 export default function MenuContent() {
