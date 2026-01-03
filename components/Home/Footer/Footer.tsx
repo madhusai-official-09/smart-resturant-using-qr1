@@ -46,13 +46,13 @@ const Footer = () => {
           <ul className="space-y-2 text-sm">
             <li>
               <a href="mailto:madhusaipitani95@gmail.com" className="hover:text-red-400 transition">
-                abcd@gmail.com
+                madhusaipitani95@gmail.com
               </a>
             </li>
 
             <li>
               <a href="tel:+918247842565" className="hover:text-red-400 transition">
-                +91 1234567890
+                +91 8247842565
               </a>
             </li>
 
