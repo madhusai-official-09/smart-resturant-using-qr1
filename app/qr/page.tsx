@@ -8,11 +8,12 @@ export default function QRGeneratorPage() {
 
   useEffect(() => {
     const generate = async () => {
-      let result: any[] = [];
+      const origin = window.location.origin; // ✅ AUTO DOMAIN
+      const result: { table: number; url: string }[] = [];
 
       for (let i = 1; i <= 6; i++) {
         const qr = await QRCode.toDataURL(
-          `http://localhost:3000/menu?table=${i}`
+          `${origin}/menu?table=${i}`
         );
 
         result.push({ table: i, url: qr });
