@@ -46,7 +46,7 @@ export default function OrdersPage() {
 
   return (
     <div className="relative min-h-screen px-12 md:px-20 text-white bg-[#05051b] pageFade">
-      {/* <ParticlesHero className="absolute inset-0 -z-10 pointer-events-none" /> */}
+      { <ParticlesHero className="absolute inset-0 -z-10 pointer-events-none" /> }
 
       {/* HEADER */}
       <div className="pt-28 slideUp">
