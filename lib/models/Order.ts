@@ -14,7 +14,7 @@ const OrderSchema = new mongoose.Schema(
     ],
     status: {
       type: String,
-      default: "Preparing", // Preparing → Cooking → Served
+      default: "Served", // Preparing → Cooking → Served
     },
   },
   { timestamps: true }
@@ -22,3 +22,4 @@ const OrderSchema = new mongoose.Schema(
 
 export default mongoose.models.Order ||
   mongoose.model("Order", OrderSchema);
+
