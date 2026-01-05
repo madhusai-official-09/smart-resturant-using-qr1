@@ -12,7 +12,7 @@ export default function AboutSmartRestaurant() {
       transition={{ duration: 0.7, ease: "easeOut" }}
     >
       {/* Optional Particles */}
-      {/* <ParticlesHero className="absolute inset-0 -z-10 pointer-events-none" /> */}
+      {<ParticlesHero className="absolute inset-0 -z-10 pointer-events-none" /> }
 
       {/* HEADER */}
       <motion.div
