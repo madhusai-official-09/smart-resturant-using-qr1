@@ -39,6 +39,21 @@ export async function GET() {
 
     const orders = await Order.find().sort({ createdAt: -1 });
 
+    const now = new Date();
+
+    // ⏱ AUTO FINISH AFTER 10 MIN
+    for (const order of orders) {
+      if (order.status !== "Preparing") continue;
+
+      const diffMinutes =
+        (now.getTime() - order.createdAt.getTime()) / 60000;
+
+      if (diffMinutes >= 10) {
+        order.status = "Finished";
+        await order.save();
+      }
+    }
+
     return NextResponse.json(
       {
         success: true,
