@@ -20,20 +20,20 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [now, setNow] = useState(Date.now());
 
-  /* live clock */
+  /* ⏱ live clock for countdown */
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
 
+  /* 🔄 fetch orders (no cache) */
   const fetchOrders = async () => {
-  const res = await fetch("/api/orders", {
-    cache: "no-store",
-  });
-  const data = await res.json();
-  if (data.success) setOrders(data.orders);
-};
-
+    const res = await fetch("/api/orders", {
+      cache: "no-store",
+    });
+    const data = await res.json();
+    if (data.success) setOrders(data.orders);
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -41,40 +41,42 @@ export default function OrdersPage() {
     return () => clearInterval(i);
   }, []);
 
-  /* ⏱ time left */
+  /* ⏱ remaining time */
   const getRemainingTime = (createdAt: string) => {
     const diff =
       10 * 60 * 1000 - (now - new Date(createdAt).getTime());
+
     if (diff <= 0) return "00:00";
+
     const m = Math.floor(diff / 60000);
     const s = Math.floor((diff % 60000) / 1000);
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  /* ❌ CANCEL ORDER (PATCH) */
+  /* ❌ cancel order (PATCH) */
   const cancelOrder = async (id: string) => {
-  try {
-    const res = await fetch(`/api/orders/${id}`, {
-      method: "PATCH",
-    });
+    try {
+      const res = await fetch(`/api/orders/${id}`, {
+        method: "PATCH",
+      });
 
-    if (!res.ok) {
-      console.error("Cancel failed:", res.status);
-      return;
+      if (!res.ok) {
+        console.error("Cancel failed:", res.status);
+        return;
+      }
+
+      const data = await res.json();
+      if (data.success) fetchOrders();
+    } catch (err) {
+      console.error("Cancel error", err);
     }
-
-    const data = await res.json();
-    if (data.success) fetchOrders();
-  } catch (err) {
-    console.error("Cancel error", err);
-  }
-};
-
+  };
 
   return (
     <div className="relative min-h-screen px-12 md:px-20 text-white bg-[#05051b]">
       <ParticlesHero className="absolute inset-0 -z-10 pointer-events-none" />
 
+      {/* HEADER */}
       <div className="pt-28">
         <h1 className="text-4xl font-bold">
           Your <span className="text-orange-400">Orders</span>
@@ -84,13 +86,14 @@ export default function OrdersPage() {
         </p>
       </div>
 
+      {/* ORDERS */}
       <div className="mt-12 pb-24">
         {orders.length === 0 ? (
           <p className="text-gray-400">No orders yet</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {orders.map((order) => {
-              const color =
+            {orders.map((order: any) => {
+              const statusColor =
                 order.status === "Preparing"
                   ? "bg-yellow-500"
                   : order.status === "Cancelled"
@@ -98,8 +101,8 @@ export default function OrdersPage() {
                   : "bg-green-500";
 
               const total = order.items.reduce(
-                (s: number, i: any) =>
-                  s + i.price * (i.quantity || 1),
+                (sum: number, i: any) =>
+                  sum + i.price * (i.quantity || 1),
                 0
               );
 
@@ -113,12 +116,13 @@ export default function OrdersPage() {
                       Table #{order.table}
                     </h2>
                     <span
-                      className={`px-3 py-1 rounded-full text-sm ${color}`}
+                      className={`px-3 py-1 rounded-full text-sm ${statusColor}`}
                     >
                       {order.status}
                     </span>
                   </div>
 
+                  {/* ⏱ TIMER */}
                   {order.status === "Preparing" && (
                     <div className="flex items-center gap-2 mt-3 text-orange-400">
                       <Timer size={18} />
@@ -144,7 +148,7 @@ export default function OrdersPage() {
                     ₹{total}
                   </p>
 
-                  {/* ❌ CANCEL */}
+                  {/* ❌ CANCEL BUTTON */}
                   {order.status === "Preparing" && (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
@@ -162,7 +166,7 @@ export default function OrdersPage() {
                             Cancel Order?
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            This cannot be undone.
+                            This action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
 
