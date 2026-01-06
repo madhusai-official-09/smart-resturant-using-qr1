@@ -10,11 +10,16 @@ const OrderSchema = new mongoose.Schema(
       {
         name: String,
         price: Number,
+        quantity: {
+          type: Number,
+          default: 1,
+        },
       },
     ],
     status: {
       type: String,
-      default: "Served", // Preparing → Cooking → Served
+      enum: ["Preparing", "Finished", "Cancelled"],
+      default: "Preparing",
     },
   },
   { timestamps: true }
@@ -22,4 +27,3 @@ const OrderSchema = new mongoose.Schema(
 
 export default mongoose.models.Order ||
   mongoose.model("Order", OrderSchema);
-
