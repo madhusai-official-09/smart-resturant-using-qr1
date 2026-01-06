@@ -53,23 +53,23 @@ export default function OrdersPage() {
 
   /* ❌ CANCEL ORDER (PATCH) */
   const cancelOrder = async (id: string) => {
-    try {
-      const res = await fetch(`/api/orders/${id}`, {
-        method: "PATCH",
-      });
+  try {
+    const res = await fetch(`/api/orders/${id}`, {
+      method: "PATCH",
+    });
 
-      const data = await res.json();
-      console.log("Cancel response:", data);
-
-      if (data.success) {
-        fetchOrders();
-      } else {
-        alert(data.message);
-      }
-    } catch (err) {
-      console.error("Cancel failed", err);
+    if (!res.ok) {
+      console.error("Cancel failed:", res.status);
+      return;
     }
-  };
+
+    const data = await res.json();
+    if (data.success) fetchOrders();
+  } catch (err) {
+    console.error("Cancel error", err);
+  }
+};
+
 
   return (
     <div className="relative min-h-screen px-12 md:px-20 text-white bg-[#05051b]">
