@@ -2,15 +2,16 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Order from "@/lib/models/Order";
 
+export const dynamic = "force-dynamic";
+
 export async function PATCH(
   req: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     await connectDB();
 
-    const { id } = context.params;
-    const order = await Order.findById(id);
+    const order = await Order.findById(params.id);
 
     if (!order) {
       return NextResponse.json(
@@ -21,10 +22,7 @@ export async function PATCH(
 
     if (order.status === "Finished") {
       return NextResponse.json(
-        {
-          success: false,
-          message: "Order already finished",
-        },
+        { success: false, message: "Order already finished" },
         { status: 400 }
       );
     }
@@ -32,14 +30,10 @@ export async function PATCH(
     order.status = "Cancelled";
     await order.save();
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Order cancelled successfully",
-        order,
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({
+      success: true,
+      order,
+    });
   } catch (err: any) {
     return NextResponse.json(
       { success: false, message: err.message },
