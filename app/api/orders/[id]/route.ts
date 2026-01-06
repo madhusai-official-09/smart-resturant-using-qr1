@@ -5,7 +5,7 @@ import Order from "@/lib/models/Order";
 export const dynamic = "force-dynamic";
 
 export async function PATCH(
-  req: Request,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -30,13 +30,13 @@ export async function PATCH(
     order.status = "Cancelled";
     await order.save();
 
-    return NextResponse.json({
-      success: true,
-      order,
-    });
-  } catch (err: any) {
     return NextResponse.json(
-      { success: false, message: err.message },
+      { success: true, order },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, message: error.message },
       { status: 500 }
     );
   }
