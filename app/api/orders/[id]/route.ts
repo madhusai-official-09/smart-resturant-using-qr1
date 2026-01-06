@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Order from "@/lib/models/Order";
 
 export const dynamic = "force-dynamic";
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -22,7 +23,10 @@ export async function PATCH(
 
     if (order.status === "Finished") {
       return NextResponse.json(
-        { success: false, message: "Order already finished" },
+        {
+          success: false,
+          message: "Order already finished",
+        },
         { status: 400 }
       );
     }
@@ -31,12 +35,18 @@ export async function PATCH(
     await order.save();
 
     return NextResponse.json(
-      { success: true, order },
+      {
+        success: true,
+        order,
+      },
       { status: 200 }
     );
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, message: error.message },
+      {
+        success: false,
+        message: error.message,
+      },
       { status: 500 }
     );
   }
