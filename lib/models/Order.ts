@@ -6,20 +6,29 @@ const OrderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    items: [
-      {
-        name: String,
-        price: Number,
-      },
-    ],
+    items: {
+      type: Array,
+      required: true,
+    },
     status: {
       type: String,
-      default: "Served", // Preparing → Cooking → Served
+      enum: ["Preparing", "Finished", "Cancelled"],
+      default: "Preparing",
+    },
+    expiresAt: {
+      type: Date,
     },
   },
   { timestamps: true }
 );
 
+// ⏱️ Auto set 10 min expiry on create
+OrderSchema.pre("save", function (next) {
+  if (!this.expiresAt) {
+    this.expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+  }
+  next();
+});
+
 export default mongoose.models.Order ||
   mongoose.model("Order", OrderSchema);
-
