@@ -2,41 +2,30 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Order from "@/lib/models/Order";
 
-export async function DELETE(
-  req: Request,
-  context: { params: Promise<{ id: string }> }
+// ❌ Cancel order
+export async function PATCH(
+  _req: Request,
+  { params }: { params: { id: string } }
 ) {
-  try {
-    await connectDB();
+  await connectDB();
 
-    const { id } = await context.params; // 👈 FIX: await params
+  const order = await Order.findByIdAndUpdate(
+    params.id,
+    { status: "Cancelled" },
+    { new: true }
+  );
 
-    const deletedOrder = await Order.findByIdAndDelete(id);
+  return NextResponse.json({ success: true, order });
+}
 
-    if (!deletedOrder) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Order not found",
-        },
-        { status: 404 }
-      );
-    }
+// 🗑️ Delete order
+export async function DELETE(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
+  await connectDB();
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Order deleted successfully",
-      },
-      { status: 200 }
-    );
-  } catch (error: any) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: error.message,
-      },
-      { status: 500 }
-    );
-  }
+  await Order.findByIdAndDelete(params.id);
+
+  return NextResponse.json({ success: true });
 }
