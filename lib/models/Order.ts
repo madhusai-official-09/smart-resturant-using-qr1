@@ -8,8 +8,14 @@ const OrderSchema = new mongoose.Schema(
     },
     items: [
       {
-        name: String,
-        price: Number,
+        name: {
+          type: String,
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
         quantity: {
           type: Number,
           default: 1,
@@ -18,13 +24,19 @@ const OrderSchema = new mongoose.Schema(
     ],
     status: {
       type: String,
-      // 👇 include Served for old data safety
-      enum: ["Preparing", "Finished", "Cancelled", "Served"],
+      enum: ["Preparing", "Finished", "Cancelled", "Served"], // Served kept for old data
       default: "Preparing",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true, // adds createdAt & updatedAt
+  }
 );
 
-export default mongoose.models.Order ||
-  mongoose.model("Order", OrderSchema);
+/**
+ * Prevent model overwrite issue in Next.js
+ */
+const Order =
+  mongoose.models.Order || mongoose.model("Order", OrderSchema);
+
+export default Order;
