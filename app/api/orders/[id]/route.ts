@@ -10,7 +10,6 @@ export async function PATCH(
     await connectDB();
 
     const { id } = context.params;
-
     const order = await Order.findById(id);
 
     if (!order) {
@@ -24,7 +23,7 @@ export async function PATCH(
       return NextResponse.json(
         {
           success: false,
-          message: "Order already finished, cannot cancel",
+          message: "Order already finished",
         },
         { status: 400 }
       );
@@ -41,9 +40,9 @@ export async function PATCH(
       },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (err: any) {
     return NextResponse.json(
-      { success: false, message: error.message },
+      { success: false, message: err.message },
       { status: 500 }
     );
   }
