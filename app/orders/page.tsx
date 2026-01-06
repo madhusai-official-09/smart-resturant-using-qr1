@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -12,8 +13,6 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-
-import { useEffect, useState } from "react";
 import { Timer } from "lucide-react";
 import ParticlesHero from "@/components/Home/Hero/ParticleBackground";
 
@@ -21,7 +20,7 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [now, setNow] = useState(Date.now());
 
-  /* ⏱ update current time every second */
+  /* live clock */
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
@@ -33,141 +32,145 @@ export default function OrdersPage() {
     if (data.success) setOrders(data.orders);
   };
 
-  /* ❌ Cancel Order */
-  const cancelOrder = async (id: string) => {
-    const res = await fetch(`/api/orders/${id}`, {
-      method: "PATCH",
-    });
-    const data = await res.json();
-    if (data.success) fetchOrders();
-  };
-
   useEffect(() => {
     fetchOrders();
-    const interval = setInterval(fetchOrders, 4000);
-    return () => clearInterval(interval);
+    const i = setInterval(fetchOrders, 4000);
+    return () => clearInterval(i);
   }, []);
 
-  /* ⏱ helper */
+  /* ⏱ time left */
   const getRemainingTime = (createdAt: string) => {
     const diff =
       10 * 60 * 1000 - (now - new Date(createdAt).getTime());
-
     if (diff <= 0) return "00:00";
+    const m = Math.floor(diff / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
 
-    const min = Math.floor(diff / 60000);
-    const sec = Math.floor((diff % 60000) / 1000);
+  /* ❌ CANCEL ORDER (PATCH) */
+  const cancelOrder = async (id: string) => {
+    try {
+      const res = await fetch(`/api/orders/${id}`, {
+        method: "PATCH",
+      });
 
-    return `${min}:${sec.toString().padStart(2, "0")}`;
+      const data = await res.json();
+      console.log("Cancel response:", data);
+
+      if (data.success) {
+        fetchOrders();
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error("Cancel failed", err);
+    }
   };
 
   return (
     <div className="relative min-h-screen px-12 md:px-20 text-white bg-[#05051b]">
       <ParticlesHero className="absolute inset-0 -z-10 pointer-events-none" />
 
-      {/* HEADER */}
       <div className="pt-28">
         <h1 className="text-4xl font-bold">
           Your <span className="text-orange-400">Orders</span>
         </h1>
-        <p className="text-gray-300 mt-2 text-lg">
+        <p className="text-gray-300 mt-2">
           Live order tracking ⏱
         </p>
       </div>
 
-      {/* ORDERS */}
       <div className="mt-12 pb-24">
         {orders.length === 0 ? (
-          <p className="text-gray-400 text-lg">No orders yet 🥺</p>
+          <p className="text-gray-400">No orders yet</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {orders.map((order: any, index: number) => {
-              const statusColor =
+            {orders.map((order) => {
+              const color =
                 order.status === "Preparing"
                   ? "bg-yellow-500"
                   : order.status === "Cancelled"
                   ? "bg-red-500"
                   : "bg-green-500";
 
-              const total = order.items?.reduce(
-                (sum: number, i: any) =>
-                  sum + i.price * (i.quantity || 1),
+              const total = order.items.reduce(
+                (s: number, i: any) =>
+                  s + i.price * (i.quantity || 1),
                 0
               );
 
               return (
                 <div
                   key={order._id}
-                  className="bg-white/10 border border-white/10 backdrop-blur-lg p-6 rounded-2xl shadow-lg"
+                  className="bg-white/10 border border-white/10 p-6 rounded-2xl"
                 >
                   <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold">
+                    <h2 className="text-xl font-bold">
                       Table #{order.table}
                     </h2>
-
                     <span
-                      className={`text-sm px-4 py-1 rounded-full ${statusColor}`}
+                      className={`px-3 py-1 rounded-full text-sm ${color}`}
                     >
                       {order.status}
                     </span>
                   </div>
 
-                  {/* ⏱ TIMER */}
                   {order.status === "Preparing" && (
-                    <div className="flex items-center gap-2 mt-3 text-orange-400 font-semibold">
+                    <div className="flex items-center gap-2 mt-3 text-orange-400">
                       <Timer size={18} />
-                      <span>{getRemainingTime(order.createdAt)} min</span>
+                      {getRemainingTime(order.createdAt)}
                     </div>
                   )}
 
-                  <p className="text-gray-300 mt-2 text-sm">
-                    Order ID: {order._id}
-                  </p>
-
                   <div className="mt-4 space-y-1">
-                    {order.items?.map((item: any, i: number) => (
-                      <div key={i} className="flex justify-between text-sm">
+                    {order.items.map((item: any, i: number) => (
+                      <div
+                        key={i}
+                        className="flex justify-between text-sm"
+                      >
                         <span>{item.name}</span>
-                        <span className="text-orange-400 font-semibold">
+                        <span>
                           ₹{item.price} x {item.quantity || 1}
                         </span>
                       </div>
                     ))}
                   </div>
 
-                  <p className="text-orange-400 text-2xl font-bold mt-4">
+                  <p className="text-orange-400 text-xl font-bold mt-4">
                     ₹{total}
                   </p>
 
-                  {/* ❌ CANCEL BUTTON */}
+                  {/* ❌ CANCEL */}
                   {order.status === "Preparing" && (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
                           variant="destructive"
-                          className="mt-4 w-full"
+                          className="w-full mt-4"
                         >
                           Cancel Order
                         </Button>
                       </AlertDialogTrigger>
 
-                      <AlertDialogContent className="bg-[#0b0b2a] text-white">
+                      <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>
-                            Cancel this order?
+                            Cancel Order?
                           </AlertDialogTitle>
-                          <AlertDialogDescription className="text-gray-300">
-                            Order will be permanently cancelled.
+                          <AlertDialogDescription>
+                            This cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
 
                         <AlertDialogFooter>
-                          <AlertDialogCancel className="bg-white/10">
+                          <AlertDialogCancel>
                             No
                           </AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={() => cancelOrder(order._id)}
-                            className="bg-red-600 hover:bg-red-700"
+                            onClick={() =>
+                              cancelOrder(order._id)
+                            }
                           >
                             Yes, Cancel
                           </AlertDialogAction>
