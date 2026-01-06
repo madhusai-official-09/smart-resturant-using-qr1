@@ -14,15 +14,26 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { useEffect, useState } from "react";
+import { Clock } from "lucide-react";
 import ParticlesHero from "@/components/Home/Hero/ParticleBackground";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
 
+  // ⏱️ Remaining time formatter
+  const getRemainingTime = (expiresAt: string) => {
+    const diff = new Date(expiresAt).getTime() - Date.now();
+    if (diff <= 0) return "00:00";
+
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
+
   const fetchOrders = async () => {
     const res = await fetch("/api/orders");
     const data = await res.json();
-
     if (data.success) setOrders(data.orders);
   };
 
@@ -30,7 +41,6 @@ export default function OrdersPage() {
     try {
       const res = await fetch(`/api/orders/${id}`, { method: "DELETE" });
       const data = await res.json();
-
       if (data.success)
         setOrders((prev) => prev.filter((o) => o._id !== id));
     } catch {
@@ -46,7 +56,7 @@ export default function OrdersPage() {
 
   return (
     <div className="relative min-h-screen px-12 md:px-20 text-white bg-[#05051b] pageFade">
-      { <ParticlesHero className="absolute inset-0 -z-10 pointer-events-none" /> }
+      <ParticlesHero className="absolute inset-0 -z-10 pointer-events-none" />
 
       {/* HEADER */}
       <div className="pt-28 slideUp">
@@ -69,8 +79,8 @@ export default function OrdersPage() {
               const statusColor =
                 order.status === "Preparing"
                   ? "bg-yellow-500"
-                  : order.status === "Cooking"
-                  ? "bg-orange-500"
+                  : order.status === "Cancelled"
+                  ? "bg-red-500"
                   : "bg-green-500";
 
               const total = order.items?.reduce(
@@ -85,6 +95,7 @@ export default function OrdersPage() {
                   style={{ animationDelay: `${index * 0.15}s` }}
                   className="orderCard bg-white/10 border border-white/10 backdrop-blur-lg p-6 rounded-2xl shadow-lg hover:scale-[1.02] hover:bg-white/20 transition-all duration-300"
                 >
+                  {/* HEADER */}
                   <div className="flex justify-between items-center">
                     <h2 className="text-2xl font-bold">
                       Table #{order.table}
@@ -135,6 +146,20 @@ export default function OrdersPage() {
                     Order ID: {order._id}
                   </p>
 
+                  {/* ⏱️ TIME SECTION */}
+                  {order.status === "Preparing" && (
+                    <div className="flex items-center gap-2 mt-3 text-sm">
+                      <Clock className="w-4 h-4 text-orange-400" />
+                      <span className="text-gray-300">
+                        Time left:
+                      </span>
+                      <span className="text-orange-400 font-semibold">
+                        {getRemainingTime(order.expiresAt)}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* ITEMS */}
                   <div className="mt-4 space-y-1">
                     {order.items?.map((item: any, i: number) => (
                       <div key={i} className="flex justify-between text-sm">
