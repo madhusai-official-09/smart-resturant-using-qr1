@@ -18,7 +18,8 @@ const OrderSchema = new mongoose.Schema(
     ],
     status: {
       type: String,
-      enum: ["Preparing", "Finished", "Cancelled"],
+      // 👇 include Served for old data safety
+      enum: ["Preparing", "Finished", "Cancelled", "Served"],
       default: "Preparing",
     },
   },
