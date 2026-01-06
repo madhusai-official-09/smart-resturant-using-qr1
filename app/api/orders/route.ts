@@ -24,10 +24,7 @@ export async function POST(req: Request) {
     );
   } catch (error: any) {
     return NextResponse.json(
-      {
-        success: false,
-        message: error.message,
-      },
+      { success: false, message: error.message },
       { status: 500 }
     );
   }
@@ -38,35 +35,35 @@ export async function GET() {
     await connectDB();
 
     const orders = await Order.find().sort({ createdAt: -1 });
-
     const now = new Date();
 
-    // ⏱ AUTO FINISH AFTER 10 MIN
     for (const order of orders) {
-      if (order.status !== "Preparing") continue;
-
-      const diffMinutes =
-        (now.getTime() - order.createdAt.getTime()) / 60000;
-
-      if (diffMinutes >= 10) {
+      // 🔁 normalize old data
+      if (order.status === "Served") {
         order.status = "Finished";
         await order.save();
+        continue;
+      }
+
+      // ⏱ auto finish after 10 minutes
+      if (order.status === "Preparing") {
+        const diffMinutes =
+          (now.getTime() - order.createdAt.getTime()) / 60000;
+
+        if (diffMinutes >= 10) {
+          order.status = "Finished";
+          await order.save();
+        }
       }
     }
 
     return NextResponse.json(
-      {
-        success: true,
-        orders,
-      },
+      { success: true, orders },
       { status: 200 }
     );
   } catch (error: any) {
     return NextResponse.json(
-      {
-        success: false,
-        message: error.message,
-      },
+      { success: false, message: error.message },
       { status: 500 }
     );
   }
