@@ -20,7 +20,7 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [now, setNow] = useState(Date.now());
 
-  /* ⏱ live clock for countdown */
+  /* ⏱ live clock */
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
@@ -28,9 +28,7 @@ export default function OrdersPage() {
 
   /* 🔄 fetch orders (no cache) */
   const fetchOrders = async () => {
-    const res = await fetch("/api/orders", {
-      cache: "no-store",
-    });
+    const res = await fetch("/api/orders", { cache: "no-store" });
     const data = await res.json();
     if (data.success) setOrders(data.orders);
   };
@@ -53,23 +51,20 @@ export default function OrdersPage() {
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  /* ❌ cancel order (PATCH) */
+  /* ❌ CANCEL (PATCH) */
   const cancelOrder = async (id: string) => {
-    try {
-      const res = await fetch(`/api/orders/${id}`, {
-        method: "PATCH",
-      });
+    const res = await fetch(`/api/orders/${id}`, {
+      method: "PATCH",
+    });
+    if (res.ok) fetchOrders();
+  };
 
-      if (!res.ok) {
-        console.error("Cancel failed:", res.status);
-        return;
-      }
-
-      const data = await res.json();
-      if (data.success) fetchOrders();
-    } catch (err) {
-      console.error("Cancel error", err);
-    }
+  /* 🗑 DELETE (DELETE) */
+  const deleteOrder = async (id: string) => {
+    const res = await fetch(`/api/orders/${id}`, {
+      method: "DELETE",
+    });
+    if (res.ok) fetchOrders();
   };
 
   return (
@@ -92,7 +87,7 @@ export default function OrdersPage() {
           <p className="text-gray-400">No orders yet</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {orders.map((order: any) => {
+            {orders.map((order) => {
               const statusColor =
                 order.status === "Preparing"
                   ? "bg-yellow-500"
@@ -148,43 +143,77 @@ export default function OrdersPage() {
                     ₹{total}
                   </p>
 
-                  {/* ❌ CANCEL BUTTON */}
-                  {order.status === "Preparing" && (
+                  {/* ACTION BUTTONS */}
+                  <div className="flex gap-3 mt-4">
+                    {/* ❌ CANCEL */}
+                    {order.status === "Preparing" && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="destructive"
+                            className="w-full"
+                          >
+                            Cancel
+                          </Button>
+                        </AlertDialogTrigger>
+
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Cancel Order?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will cancel the order.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>No</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() =>
+                                cancelOrder(order._id)
+                              }
+                            >
+                              Yes, Cancel
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
+
+                    {/* 🗑 DELETE */}
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
-                          variant="destructive"
-                          className="w-full mt-4"
+                          variant="outline"
+                          className="w-full border-red-500 text-red-400"
                         >
-                          Cancel Order
+                          Delete
                         </Button>
                       </AlertDialogTrigger>
 
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>
-                            Cancel Order?
+                            Delete Order?
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            This action cannot be undone.
+                            This will permanently delete the order.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
-
                         <AlertDialogFooter>
-                          <AlertDialogCancel>
-                            No
-                          </AlertDialogCancel>
+                          <AlertDialogCancel>No</AlertDialogCancel>
                           <AlertDialogAction
+                            className="bg-red-600 hover:bg-red-700"
                             onClick={() =>
-                              cancelOrder(order._id)
+                              deleteOrder(order._id)
                             }
                           >
-                            Yes, Cancel
+                            Delete
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
-                  )}
+                  </div>
                 </div>
               );
             })}
