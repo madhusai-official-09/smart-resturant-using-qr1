@@ -14,15 +14,22 @@ export async function POST(req: Request) {
       status: "Preparing",
     });
 
-    return NextResponse.json({
-      success: true,
-      order,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Order placed successfully",
+        order,
+      },
+      { status: 201 }
+    );
   } catch (error: any) {
-    return NextResponse.json({
-      success: false,
-      message: error.message,
-    });
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message,
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -30,27 +37,22 @@ export async function GET() {
   try {
     await connectDB();
 
-    const now = new Date();
-
-    // ⏱️ AUTO FINISH AFTER 10 MIN
-    await Order.updateMany(
-      {
-        status: "Preparing",
-        expiresAt: { $lte: now },
-      },
-      { status: "Finished" }
-    );
-
     const orders = await Order.find().sort({ createdAt: -1 });
 
-    return NextResponse.json({
-      success: true,
-      orders,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        orders,
+      },
+      { status: 200 }
+    );
   } catch (error: any) {
-    return NextResponse.json({
-      success: false,
-      message: error.message,
-    });
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message,
+      },
+      { status: 500 }
+    );
   }
 }
