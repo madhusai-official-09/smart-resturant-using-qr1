@@ -2,30 +2,53 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Order from "@/lib/models/Order";
 
-// ❌ Cancel order
+// ❌ Cancel Order
 export async function PATCH(
-  _req: Request,
-  { params }: { params: { id: string } }
+  req: Request,
+  context: { params: { id: string } }
 ) {
-  await connectDB();
+  try {
+    await connectDB();
 
-  const order = await Order.findByIdAndUpdate(
-    params.id,
-    { status: "Cancelled" },
-    { new: true }
-  );
+    const id = context.params.id;
 
-  return NextResponse.json({ success: true, order });
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { status: "Cancelled" },
+      { new: true }
+    );
+
+    return NextResponse.json({
+      success: true,
+      order,
+    });
+  } catch (error: any) {
+    return NextResponse.json({
+      success: false,
+      message: error.message,
+    });
+  }
 }
 
-// 🗑️ Delete order
+// 🗑️ Delete Order
 export async function DELETE(
-  _req: Request,
-  { params }: { params: { id: string } }
+  req: Request,
+  context: { params: { id: string } }
 ) {
-  await connectDB();
+  try {
+    await connectDB();
 
-  await Order.findByIdAndDelete(params.id);
+    const id = context.params.id;
 
-  return NextResponse.json({ success: true });
+    await Order.findByIdAndDelete(id);
+
+    return NextResponse.json({
+      success: true,
+    });
+  } catch (error: any) {
+    return NextResponse.json({
+      success: false,
+      message: error.message,
+    });
+  }
 }
