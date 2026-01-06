@@ -20,7 +20,6 @@ export async function PATCH(
       );
     }
 
-    // ❌ Do not allow cancelling finished orders
     if (order.status === "Finished") {
       return NextResponse.json(
         {
@@ -44,10 +43,7 @@ export async function PATCH(
     );
   } catch (error: any) {
     return NextResponse.json(
-      {
-        success: false,
-        message: error.message,
-      },
+      { success: false, message: error.message },
       { status: 500 }
     );
   }
