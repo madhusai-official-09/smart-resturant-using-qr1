@@ -105,7 +105,7 @@ export default function OrdersPage() {
                 {/* 🗑 DELETE ICON */}
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <button className="absolute top-4 right-4 text-red-400 hover:text-red-500 transition">
+                    <button className="absolute top-2 right-2 text-red-400 hover:text-red-500 transition">
                       <Trash2 size={18} />
                     </button>
                   </AlertDialogTrigger>
